@@ -1,4 +1,5 @@
 # asyncproxy
+Handles synchronous requests and sends them asynchronously
 #### Install
 ```bash
 cd ~
