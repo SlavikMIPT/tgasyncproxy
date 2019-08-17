@@ -8,6 +8,7 @@ pip3 install -r requirements.txt
 ```
 #### Server
 - `--size` - max queue size
+- `--rps` - requests per second
 - `--host` - host address
 - `--port` - port address
 ```bash

@@ -9,6 +9,7 @@ API_URL = 'https://api.telegram.org'
 MAX_QUEUE_SIZE = 100
 HOST_PORT = 80
 HOST_ADDR = '127.0.0.2'
+RPS = 10
 routes = web.RouteTableDef()
 app = web.Application()
 requests_pool = []
@@ -18,10 +19,10 @@ event = asyncio.Event()
 
 async def on_startup(app):
     loop = asyncio.get_event_loop()
-    loop.create_task(send_loop())
+    loop.create_task(send_loop(1.0/RPS))
 
 
-async def send_loop():
+async def send_loop(delay: float = 0.1):
     async with ClientSession() as session:
         while True:
             request = None
@@ -39,7 +40,7 @@ async def send_loop():
             if queue_size == 0:
                 await event.wait()
             else:
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(delay)
 
 
 @routes.post('/{bot_token}/{request}')
@@ -58,10 +59,11 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Handles synchronous requests and sends them asynchronously')
     parser.add_argument('--size', type=int, default=MAX_QUEUE_SIZE, help='max queue size')
+    parser.add_argument('--rps', type=int, default=RPS, help='requests per second')
     parser.add_argument('--host', type=str, default=HOST_ADDR, help='host address')
     parser.add_argument('--port', type=str, default=HOST_PORT, help='host port')
     args = parser.parse_args()
-    MAX_QUEUE_SIZE, HOST_ADDR, HOST_PORT = args.size, args.host, args.port
+    MAX_QUEUE_SIZE, RPS, HOST_ADDR, HOST_PORT = args.size, args.rps, args.host, args.port
 
     app.router.add_routes(routes)
     app.on_startup.append(on_startup)
