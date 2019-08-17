@@ -12,7 +12,7 @@ pip3 install -r requirements.txt
 - `--host` - host address
 - `--port` - port address
 ```bash
-python3 async_proxy.py --size 1000 --host 127.0.0.1 --port 8081
+python3 async_proxy.py --size 1000 --rps 10 --host 127.0.0.1 --port 8081
 ```
 #### Client
 - `--id` - chat id
