@@ -42,8 +42,8 @@ async def send_loop(delay: float = 0.1):
 
 @routes.post('/{bot_token}/{request}')
 async def handle_post(request):
-    request_path_qs = request.path_qs
     async with lock:
+        request_path_qs = request.path_qs
         if request_path_qs in requests_pool:
             return web.Response(status=429)
         else:
